@@ -19,3 +19,14 @@ func CMAC(key []byte,data []byte)[]byte {
 	}
 	return mac
 }
+
+func CMAC8(key []byte,data []byte)[]byte {
+	mac := CMAC(key,data);
+	ret := make([]byte,8)
+	for i:=0;i<16;i++ {
+		if i % 2  != 0 {
+			ret[i/2] = mac[i]
+		}
+	}
+	return ret
+}
