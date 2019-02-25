@@ -1,6 +1,11 @@
 package aescmac
 
-import "unsafe"
+import (
+	"bytes"
+	"encoding/hex"
+	"github.com/pkg/errors"
+	"unsafe"
+)
 /*
 void cmacgo(const unsigned char *key,const unsigned char *ptr,int size,unsigned char *mac);
 */
@@ -29,4 +34,38 @@ func CMAC8(key []byte,data []byte)[]byte {
 		}
 	}
 	return ret
+}
+
+func VaildNTAG413DNA(key []byte,uid,ctr,mac string) bool {
+	if(len(key) != 16){
+		panic(errors.New("key len error"))
+	}
+	if(len(uid) != 14){
+		panic(errors.New("uid len error"))
+	}
+	if(len(ctr) != 6){
+		panic(errors.New("ctr len error"))
+	}
+	if(len(mac) != 16){
+		panic(errors.New("mac len error"))
+	}
+	uidb ,err:= hex.DecodeString(uid)
+	if err != nil {
+		panic(err)
+	}
+	ctrb,err := hex.DecodeString(ctr)
+	if err != nil {
+		panic(err)
+	}
+	macb,err := hex.DecodeString(mac)
+	if err != nil {
+		panic(err)
+	}
+	kssv := []byte{}
+	kssv = append(kssv,0x3C,0xC3,0x00,0x01,0x00,0x80)
+	kssv = append(kssv,uidb...)
+	kssv = append(kssv,ctrb[2],ctrb[1],ctrb[0])
+	kss := CMAC(key,kssv)
+	macv := CMAC8(kss,nil)
+	return bytes.Equal(macv,macb)
 }
