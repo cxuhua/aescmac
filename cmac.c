@@ -52,15 +52,6 @@ static void cmac_generate_sub_key(unsigned char *out, unsigned char *in) {
   return;
 }
 
-
-static void dump(const unsigned char *v,int size)
-{
-    for(int i=0;i<size;i++){
-        printf("%.2X",v[i]);
-    }
-    printf("\n");
-}
-
 void cmac_encrypt (cmac_ctx *ctx, const unsigned char *msg, int msg_len, unsigned char *ct) {
   int n, i, k;
   unsigned char iv[AES_BLOCK_SIZE]={0};
@@ -77,27 +68,24 @@ void cmac_encrypt (cmac_ctx *ctx, const unsigned char *msg, int msg_len, unsigne
     for (i = 0; i < AES_BLOCK_SIZE; i++){
         buf[i] ^= ctx->K2[i];
     }
-    AES_cbc_encrypt(buf, buf, AES_BLOCK_SIZE , &ctx->cmac_key, iv, AES_ENCRYPT);
-    memcpy(ct,iv,AES_BLOCK_SIZE);
-    free(buf);
-    return;
-  }
+  }else{
     buf = (unsigned char *)malloc(asiz);
     memset(buf,0,asiz);
     memcpy(buf,msg,msg_len);
-  if(k == 0){
-    int len = asiz - AES_BLOCK_SIZE;
-    for (i = 0; i < AES_BLOCK_SIZE; i++){
-        buf[len + i] ^= ctx->K1[i];
+    if(k == 0){
+        int len = asiz - AES_BLOCK_SIZE;
+        for (i = 0; i < AES_BLOCK_SIZE; i++){
+            buf[len + i] ^= ctx->K1[i];
+        }
+    }else{
+        buf[msg_len++] = 0x80;
+        int len = asiz - AES_BLOCK_SIZE;
+        for (i = 0; i < AES_BLOCK_SIZE; i++){
+            buf[len + i] ^= ctx->K2[i];
+        }
     }
-  }else{
-    buf[msg_len++] = 0x80;
-    int len = asiz - AES_BLOCK_SIZE;
-    for (i = 0; i < AES_BLOCK_SIZE; i++){
-        buf[len + i] ^= ctx->K2[i];
-    }
-  }
- AES_cbc_encrypt(buf, buf, AES_BLOCK_SIZE *n, &ctx->cmac_key, iv, AES_ENCRYPT);
+ }
+ AES_cbc_encrypt(buf, buf, AES_BLOCK_SIZE * n , &ctx->cmac_key, iv, AES_ENCRYPT);
  memcpy(ct,iv,AES_BLOCK_SIZE);
  free(buf);
 }
