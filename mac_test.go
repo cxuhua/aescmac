@@ -13,6 +13,7 @@ func TestAesMac(t *testing.T){
 	log.Println(hex.EncodeToString(mac))
 }
 
+//uid=041E19A2FB6180&ctr=00000E&mac=03745F4EDBC3875A
 func TestValue413DNA(t *testing.T){
 	key := make([]byte,16)
 	ret := VaildNTAG413DNA(key,"041E19A2FB6180","00000E","03745F4EDBC3875A")
