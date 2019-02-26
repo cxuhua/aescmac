@@ -36,7 +36,7 @@ func CMAC8(key []byte,data []byte)[]byte {
 	return ret
 }
 
-func VaildNTAG413DNA(key []byte,uid,ctr,mac string) bool {
+func VaildNTAG413DNA(key []byte,uid,ctr,mac string,input string) bool {
 	if(len(key) != 16){
 		panic(errors.New("key len error"))
 	}
@@ -66,6 +66,12 @@ func VaildNTAG413DNA(key []byte,uid,ctr,mac string) bool {
 	kssv = append(kssv,uidb...)
 	kssv = append(kssv,ctrb[2],ctrb[1],ctrb[0])
 	kss := CMAC(key,kssv)
-	macv := CMAC8(kss,nil)
+	var ib []byte = nil
+	if len(input) > 0 {
+		ib = []byte(input)
+	}else{
+		ib = nil
+	}
+	macv := CMAC8(kss,ib)
 	return bytes.Equal(macv,macb)
 }

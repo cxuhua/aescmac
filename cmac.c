@@ -68,6 +68,7 @@ void cmac_encrypt (cmac_ctx *ctx, const unsigned char *msg, int msg_len, unsigne
     for (i = 0; i < AES_BLOCK_SIZE; i++){
         buf[i] ^= ctx->K2[i];
     }
+    n = 1;
   }else{
     buf = (unsigned char *)malloc(asiz);
     memset(buf,0,asiz);
