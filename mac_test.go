@@ -2,7 +2,6 @@ package aescmac
 
 import (
 	"encoding/hex"
-	"log"
 	"testing"
 )
 
@@ -10,7 +9,9 @@ func TestAesMac(t *testing.T){
 	key := make([]byte,16)
 	data:= []byte{1}
 	mac := CMAC8(key,data)
-	log.Println(hex.EncodeToString(mac))
+	if hex.EncodeToString(mac) != "82955c99a3709634" {
+		t.Error("CMAC8 error")
+	}
 }
 
 //uid=041E19A2FB6180&ctr=00000E&mac=03745F4EDBC3875A
