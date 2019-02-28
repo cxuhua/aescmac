@@ -36,7 +36,8 @@ func CMAC8(key []byte,data []byte)[]byte {
 	return ret
 }
 
-func VaildNTAG413DNA(key []byte,uid,ctr,mac string,input []byte) bool {
+//支持ntag413dna ntag424dna
+func VaildNTAGDNA(key []byte,uid,ctr,mac string,input []byte) bool {
 	if(len(key) != 16){
 		panic(errors.New("key len error"))
 	}

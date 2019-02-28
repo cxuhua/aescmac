@@ -17,7 +17,7 @@ func TestAesMac(t *testing.T){
 //uid=041E19A2FB6180&ctr=00000E&mac=03745F4EDBC3875A
 func TestValue413DNA(t *testing.T){
 	key := make([]byte,16)
-	ret := VaildNTAG413DNA(key,"041E19A2FB6180","00000E","03745F4EDBC3875A",nil)
+	ret := VaildNTAGDNA(key,"041E19A2FB6180","00000E","03745F4EDBC3875A",nil)
 	if !ret {
 		t.Error("Test imacoff == macoff error")
 	}
@@ -25,8 +25,32 @@ func TestValue413DNA(t *testing.T){
 //http://www.xxx.com/?uid=042410A2FB6180&ctr=000002&mac=DCF9F78B197F6E64 imacoff=5
 func TestValue413DNAWithInput(t *testing.T) {
 	key := make([]byte,16)
-	ret := VaildNTAG413DNA(key,"042410A2FB6180","000002","DCF9F78B197F6E64",[]byte("xxx.com/?uid=042410A2FB6180&ctr=000002&mac="))
+	ret := VaildNTAGDNA(key,"042410A2FB6180","000002","DCF9F78B197F6E64",[]byte("xxx.com/?uid=042410A2FB6180&ctr=000002&mac="))
 	if !ret {
 		t.Error("Test imacoff != macoff error")
+	}
+}
+//http://www.xxx.com/?uid=047D1432AA6180&ctr=000006&tt=OO&mac=023E3F6F08351B31
+func TestValue424DNA(t *testing.T){
+	key := make([]byte,16)
+	ret := VaildNTAGDNA(key,"047D1432AA6180","000006","023E3F6F08351B31",nil)
+	if !ret {
+		t.Error("Test imacoff == macoff error")
+	}
+}
+//http://www.xxx.com/?uid=047D1432AA6180&ctr=000008&tt=OO&mac=4129C412374AB665
+func TestValue424DNAWithInput(t *testing.T){
+	key := make([]byte,16)
+	ret := VaildNTAGDNA(key,"047D1432AA6180","000008","4129C412374AB665",[]byte("xxx.com/?uid=047D1432AA6180&ctr=000008&tt=OO&mac="))
+	if !ret {
+		t.Error("Test imacoff == macoff error")
+	}
+}
+//http://www.xxx.com/?uid=047A1732AA6180&ctr=000002&tt=CC&mac=DE71083237D5AF8C
+func TestValue424DNAWithCCInput(t *testing.T){
+	key := make([]byte,16)
+	ret := VaildNTAGDNA(key,"047A1732AA6180","000002","DE71083237D5AF8C",[]byte("xxx.com/?uid=047A1732AA6180&ctr=000002&tt=CC&mac="))
+	if !ret {
+		t.Error("Test imacoff == macoff error")
 	}
 }
