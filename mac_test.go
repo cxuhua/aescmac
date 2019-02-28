@@ -39,6 +39,7 @@ func TestValue424DNA(t *testing.T){
 	}
 }
 //http://www.xxx.com/?uid=047D1432AA6180&ctr=000008&tt=OO&mac=4129C412374AB665
+//C闭合状态O打开状态I初始状态
 func TestValue424DNAWithInput(t *testing.T){
 	key := make([]byte,16)
 	ret := VaildNTAGDNA(key,"047D1432AA6180","000008","4129C412374AB665",[]byte("xxx.com/?uid=047D1432AA6180&ctr=000008&tt=OO&mac="))
@@ -47,6 +48,7 @@ func TestValue424DNAWithInput(t *testing.T){
 	}
 }
 //http://www.xxx.com/?uid=047A1732AA6180&ctr=000002&tt=CC&mac=DE71083237D5AF8C
+//C闭合状态O打开状态I初始状态
 func TestValue424DNAWithCCInput(t *testing.T){
 	key := make([]byte,16)
 	ret := VaildNTAGDNA(key,"047A1732AA6180","000002","DE71083237D5AF8C",[]byte("xxx.com/?uid=047A1732AA6180&ctr=000002&tt=CC&mac="))
