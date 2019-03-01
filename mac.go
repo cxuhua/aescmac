@@ -35,6 +35,10 @@ func CMAC8(key []byte,data []byte)[]byte {
 	}
 	return ret
 }
+//TT&mac=
+func VaildNTAGDNAWithTT(key []byte,uid,ctr,mac ,tts string) bool {
+	return VaildNTAGDNA(key,uid,ctr,mac,[]byte(tts+"&mac="))
+}
 
 //支持ntag413dna ntag424dna
 func VaildNTAGDNA(key []byte,uid,ctr,mac string,input []byte) bool {
