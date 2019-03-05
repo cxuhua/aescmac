@@ -47,11 +47,11 @@ func TestValue424DNAWithInput(t *testing.T){
 		t.Error("Test imacoff == macoff error")
 	}
 }
-//http://www.xxx.com/?uid=047A1732AA6180&ctr=000002&tt=CC&mac=DE71083237D5AF8C
+//https://trace.rfidtrace.com/h5/047A1732AA6180?ctr=00000C&tts=CC&mac=70F6B12FF1D634A0
 //C闭合状态O打开状态I初始状态
 func TestValue424DNAWithCCInput(t *testing.T){
-	key := make([]byte,16)
-	ret := VaildNTAGDNA(key,"047A1732AA6180","000002","DE71083237D5AF8C",[]byte("xxx.com/?uid=047A1732AA6180&ctr=000002&tt=CC&mac="))
+	key := []byte("JvQcZnKs2bI3RDO5")
+	ret := VaildNTAGDNAWithTT(key,"047A1732AA6180","00000C","70F6B12FF1D634A0","CC")
 	if !ret {
 		t.Error("Test imacoff == macoff error")
 	}
