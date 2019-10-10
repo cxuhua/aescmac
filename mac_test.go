@@ -1,7 +1,11 @@
 package aescmac
 
 import (
+	"crypto/aes"
+	"crypto/cipher"
 	"encoding/hex"
+	"log"
+	"strings"
 	"testing"
 )
 
@@ -30,10 +34,39 @@ func TestValue413DNAWithInput(t *testing.T) {
 		t.Error("Test imacoff != macoff error")
 	}
 }
+func TestPICCEncode(t *testing.T) {
+	key := []byte("JvQcZnKs2bI3RDO5")
+	data := "D22C3BA653E1D5A451A01D0C0E4DBF4D"
+	db,_:= hex.DecodeString(data)
+	log.Println(key,db)
+
+	block, err := aes.NewCipher(key)
+	if err != nil {
+		panic(err)
+	}
+
+	blockMode := cipher.NewCBCDecrypter(block, []byte{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0})
+	origData := make([]byte, len(db))
+	blockMode.CryptBlocks(origData, db)
+	log.Println(strings.ToUpper(hex.EncodeToString(origData)))
+
+	x :=VaildNTAGDNA(key,"047a1732aa6180","000040","95133B479DD28FFD",[]byte("xginx.com/sign/D22C3BA653E1D5A451A01D0C0E4DBF4DCC"))
+	log.Println(x)
+	//xginx.com/sign/c7047a1732aa61804000001bd483a73aCC 95133B479DD28FFD
+}
+
+//https://nestle.com/1?&UID=042313A2FB6180&Ctr=000014&Cmac=BF4A11AA532BF841
 //http://www.xxx.com/?uid=047D1432AA6180&ctr=000006&tt=OO&mac=023E3F6F08351B31
+//"https://nestle.com/1?&UID=042313A2FB6180&Ctr=00001A&Cmac=F15C93DDE97EA224"
 func TestValue424DNA(t *testing.T){
-	key := make([]byte,16)
-	ret := VaildNTAGDNA(key,"047D1432AA6180","000006","023E3F6F08351B31",nil)
+	key,err := hex.DecodeString("8cef6454381e6a88841705641b6ee6f8")
+	if err != nil {
+		panic(err)
+	}
+	if len(key) != 16 {
+		panic("key len error")
+	}
+	ret := VaildNTAGDNA(key,"042313A2FB6180","00001A","F15C93DDE97EA224",nil)
 	if !ret {
 		t.Error("Test imacoff == macoff error")
 	}
