@@ -34,6 +34,8 @@ func TestValue413DNAWithInput(t *testing.T) {
 		t.Error("Test imacoff != macoff error")
 	}
 }
+
+//https://xginx.com/sign/D22C3BA653E1D5A451A01D0C0E4DBF4DCC95133B479DD28FFD
 func TestPICCEncode(t *testing.T) {
 	key := []byte("JvQcZnKs2bI3RDO5")
 	data := "D22C3BA653E1D5A451A01D0C0E4DBF4D"
