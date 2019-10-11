@@ -5,7 +5,7 @@ import (
 	"crypto/aes"
 	"crypto/cipher"
 	"encoding/hex"
-	"github.com/pkg/errors"
+	"errors"
 	"unsafe"
 )
 /*
