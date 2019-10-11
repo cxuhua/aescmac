@@ -2,6 +2,8 @@ package aescmac
 
 import (
 	"bytes"
+	"crypto/aes"
+	"crypto/cipher"
 	"encoding/hex"
 	"github.com/pkg/errors"
 	"unsafe"
@@ -40,6 +42,71 @@ func VaildNTAGDNAWithTT(key []byte,uid,ctr,mac ,tts string) bool {
 	return VaildNTAGDNA(key,uid,ctr,mac,[]byte(tts+"&mac="))
 }
 
+//支持ntag424dna
+func DecryptPICCData(key []byte,input string) []byte {
+	block, err := aes.NewCipher(key)
+	if err != nil {
+		panic(err)
+	}
+	ib ,err:= hex.DecodeString(input)
+	if err != nil {
+		panic(err)
+	}
+	blockMode := cipher.NewCBCDecrypter(block, []byte{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0})
+	data := make([]byte, len(ib))
+	blockMode.CryptBlocks(data, ib)
+	return data
+}
+
+//支持ntag424dna
+func DecryptEncData(key []byte,uid,ctr,input string) []byte {
+	if(len(key) != 16){
+		panic(errors.New("key len error"))
+	}
+	if(len(uid) != 14){
+		panic(errors.New("uid len error"))
+	}
+	if(len(ctr) != 6){
+		panic(errors.New("ctr len error"))
+	}
+	if(len(input) % 16 != 0){
+		panic(errors.New("input len error"))
+	}
+	uidb ,err:= hex.DecodeString(uid)
+	if err != nil {
+		panic(err)
+	}
+	ctrb,err := hex.DecodeString(ctr)
+	if err != nil {
+		panic(err)
+	}
+	inputb,err := hex.DecodeString(input)
+	if err != nil {
+		panic(err)
+	}
+	//get read key
+	enciv := []byte{}
+	enciv = append(enciv,0xC3,0x3C,0x00,0x01,0x00,0x80)
+	enciv = append(enciv,uidb...)
+	enciv = append(enciv,ctrb[2],ctrb[1],ctrb[0])
+	enckey := CMAC(key,enciv)
+
+	block, err := aes.NewCipher(enckey)
+	if err != nil {
+		panic(err)
+	}
+	//get iv
+	ivb := []byte{ctrb[2],ctrb[1],ctrb[0],0,0,0,0,0,0,0,0,0,0,0,0,0}
+	blockMode := cipher.NewCBCEncrypter(block, []byte{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0})
+	iv := make([]byte, len(ivb))
+	blockMode.CryptBlocks(iv, ivb)
+	//get data
+	data := make([]byte, len(inputb))
+	blockMode = cipher.NewCBCDecrypter(block, iv)
+	blockMode.CryptBlocks(data, inputb)
+	return data
+}
+
 //支持ntag413dna ntag424dna
 func VaildNTAGDNA(key []byte,uid,ctr,mac string,input []byte) bool {
 	if(len(key) != 16){
@@ -66,11 +133,11 @@ func VaildNTAGDNA(key []byte,uid,ctr,mac string,input []byte) bool {
 	if err != nil {
 		panic(err)
 	}
-	kssv := []byte{}
-	kssv = append(kssv,0x3C,0xC3,0x00,0x01,0x00,0x80)
-	kssv = append(kssv,uidb...)
-	kssv = append(kssv,ctrb[2],ctrb[1],ctrb[0])
-	kss := CMAC(key,kssv)
-	macv := CMAC8(kss,input)
+	maciv := []byte{}
+	maciv = append(maciv,0x3C,0xC3,0x00,0x01,0x00,0x80)
+	maciv = append(maciv,uidb...)
+	maciv = append(maciv,ctrb[2],ctrb[1],ctrb[0])
+	mackey := CMAC(key,maciv)
+	macv := CMAC8(mackey,input)
 	return bytes.Equal(macv,macb)
 }

@@ -35,8 +35,30 @@ func TestValue413DNAWithInput(t *testing.T) {
 	}
 }
 
+
+//https://xginx.com/sign/
+// 55B81FE956A0A36831B56A599B3C1783  encdata
+// B3503D9BB275E5D2A5F48C3781DB1D86
+// CC 573FD80B825BC20C
+func TestPICCEncodeWithEncData(t *testing.T) {
+
+	key := []byte("JvQcZnKs2bI3RDO5")
+
+
+	picc := DecryptPICCData(key,"B3503D9BB275E5D2A5F48C3781DB1D86")
+	log.Println("PICC DATA=",hex.EncodeToString(picc))
+
+	encdata := DecryptEncData(key,"047A1732AA6180","000043","55B81FE956A0A36831B56A599B3C1783")
+	log.Println("ENC DATA=",hex.EncodeToString(encdata))
+
+	x :=VaildNTAGDNA(key,"047A1732AA6180","000043","573FD80B825BC20C",[]byte("xginx.com/sign/55B81FE956A0A36831B56A599B3C1783B3503D9BB275E5D2A5F48C3781DB1D86CC"))
+	log.Println(x)
+	//xginx.com/sign/c7047a1732aa61804000001bd483a73aCC 95133B479DD28FFD
+}
+
 //https://xginx.com/sign/D22C3BA653E1D5A451A01D0C0E4DBF4DCC95133B479DD28FFD
 func TestPICCEncode(t *testing.T) {
+
 	key := []byte("JvQcZnKs2bI3RDO5")
 	data := "D22C3BA653E1D5A451A01D0C0E4DBF4D"
 	db,_:= hex.DecodeString(data)
