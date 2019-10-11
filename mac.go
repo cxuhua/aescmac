@@ -42,8 +42,41 @@ func VaildNTAGDNAWithTT(key []byte,uid,ctr,mac ,tts string) bool {
 	return VaildNTAGDNA(key,uid,ctr,mac,[]byte(tts+"&mac="))
 }
 
+type PiccHeader []byte
+
+func(h PiccHeader)EnableMirrUID() bool {
+	return (h[0] & 0b10000000) != 0
+}
+
+func(h PiccHeader)EnableMirrCtr() bool {
+	return (h[0] & 0b01000000) != 0
+}
+
+func(h PiccHeader)UIDLength() int {
+	return int(h[0] &0b111)
+}
+
+func(h PiccHeader)GetUID() []byte {
+	if h.EnableMirrUID() {
+		return h[1:h.UIDLength()+1]
+	}
+	return nil
+}
+
+func(h PiccHeader)GetCtr() []byte {
+	if !h.EnableMirrCtr() {
+		return nil
+	}
+	off := 1
+	if h.EnableMirrUID() {
+		off += 7
+	}
+
+	return h[off:off + 3]
+}
+
 //支持ntag424dna
-func DecryptPICCData(key []byte,input string) []byte {
+func DecryptPICCData(key []byte,input string) PiccHeader {
 	block, err := aes.NewCipher(key)
 	if err != nil {
 		panic(err)

@@ -46,7 +46,7 @@ func TestPICCEncodeWithEncData(t *testing.T) {
 
 
 	picc := DecryptPICCData(key,"B3503D9BB275E5D2A5F48C3781DB1D86")
-	log.Println("PICC DATA=",hex.EncodeToString(picc))
+	log.Printf("UID=%s CTR=%s\n",hex.EncodeToString(picc.GetUID()),hex.EncodeToString(picc.GetCtr()))
 
 	encdata := DecryptEncData(key,"047A1732AA6180","000043","55B81FE956A0A36831B56A599B3C1783")
 	log.Println("ENC DATA=",hex.EncodeToString(encdata))
